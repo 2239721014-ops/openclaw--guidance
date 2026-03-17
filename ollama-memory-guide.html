@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 长期记忆配置指南</title>
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --primary: #5E5CE6;
+            --primary-light: #A78BFA;
+            --accent-green: #0D9488;
+            --accent-green-light: #CCFBF1;
+            --bg-main: linear-gradient(135deg, #f5f5f7 0%, #e8e8f0 50%, #f0f5f9 100%);
+            --bg-card: rgba(255, 255, 255, 0.72);
+            --text-main: #1D1D1F;
+            --text-secondary: #86868B;
+            --shadow: 0 8px 32px rgba(94, 92, 230, 0.08);
+            --shadow-lg: 0 16px 48px rgba(94, 92, 230, 0.12);
+            --glass: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --radius: 20px;
+            --radius-lg: 28px;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif; 
+            background: var(--bg-main);
+            color: var(--text-main);
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 40px 20px 80px; 
+            line-height: 1.7; 
+        }
+        
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        
+        h1 { 
+            font-size: 28px; 
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 50%, var(--accent-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        h2 { 
+            font-size: 18px; 
+            font-weight: 600; 
+            margin-top: 36px; 
+            margin-bottom: 18px; 
+            color: var(--text-main);
+        }
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .intro-card {
+            background: linear-gradient(135deg, rgba(94, 92, 230, 0.08) 0%, rgba(13, 148, 136, 0.06) 100%);
+            border: 1px solid rgba(94, 92, 230, 0.15);
+        }
+        .intro-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+        .intro-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            object-fit: cover;
+            box-shadow: 0 8px 24px rgba(94, 92, 230, 0.2);
+            border: 3px solid white;
+        }
+        .intro-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .intro-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        .nav-bar { 
+            position: sticky; 
+            top: 20px; 
+            background: var(--glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 18px 24px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--glass-border);
+            z-index: 100;
+        }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .nav-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-btn { 
+            background: rgba(94, 92, 230, 0.08);
+            color: var(--primary);
+            border: 1px solid rgba(94, 92, 230, 0.12);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+        .nav-btn:hover { 
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(94, 92, 230, 0.25);
+        }
+        
+        .step { 
+            background: var(--bg-card); 
+            padding: 18px 20px; 
+            margin: 12px 0; 
+            border-radius: var(--radius); 
+            border-left: 4px solid var(--primary); 
+            position: relative; 
+        }
+        .step-num { 
+            font-weight: 600; 
+            color: var(--primary); 
+            margin-right: 12px; 
+            background: var(--accent-green-light); 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            font-size: 13px;
+        }
+        
+        .platform-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .platform-tab {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(94, 92, 230, 0.1);
+            color: var(--primary);
+        }
+        .platform-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .platform-content {
+            display: none;
+        }
+        .platform-content.active {
+            display: block;
+        }
+        
+        code { 
+            background: rgba(94, 92, 230, 0.08); 
+            padding: 3px 8px; 
+            border-radius: 6px; 
+            font-family: 'SF Mono', Monaco, monospace; 
+            color: var(--primary); 
+            font-size: 14px;
+        }
+        pre { 
+            background: #1E1E2E; 
+            color: #CDD6F4; 
+            padding: 20px; 
+            border-radius: var(--radius); 
+            overflow-x: auto; 
+            position: relative;
+            margin: 16px 0;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, var(--accent-green) 0%, #10B981 100%);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .note { 
+            background: var(--accent-green-light); 
+            padding: 16px 20px; 
+            border-radius: var(--radius); 
+            margin: 16px 0; 
+            border: 1px solid rgba(52, 211, 153, 0.3); 
+        }
+        .note.warning {
+            background: #FEF3C7;
+            border-color: #F59E0B;
+        }
+        .note.danger {
+            background: #FEE2E2;
+            border-color: #EF4444;
+        }
+        
+        .section { scroll-margin-top: 100px; }
+        
+        .card { 
+            background: var(--bg-card); 
+            border-radius: var(--radius-lg); 
+            padding: 24px; 
+            margin: 16px 0; 
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04); 
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        th {
+            background: rgba(94, 92, 230, 0.08);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .back-to-top {
+            display: block;
+            text-align: center;
+            margin-top: 48px;
+        }
+        .back-to-top a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(94, 92, 230, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+            border-radius: 20px;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, var(--accent-green) 0%, #10B981 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(13, 148, 136, 0.4);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        hr { border: none; height: 1px; background: linear-gradient(90deg, transparent, rgba(94, 92, 230, 0.2), transparent); margin: 48px 0; }
+        
+        .agent-input-group {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            margin: 20px 0;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+        }
+        .agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .agent-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .agent-item .num {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .agent-item input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid rgba(94, 92, 230, 0.2);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        .agent-item input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .agent-item .remove-btn {
+            width: 28px;
+            height: 28px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .agent-item .remove-btn:hover {
+            background: #EF4444;
+            color: white;
+        }
+        .add-btn {
+            margin-top: 12px;
+            padding: 10px 18px;
+            background: rgba(94, 92, 230, 0.1);
+            color: var(--primary);
+            border: 2px dashed rgba(94, 92, 230, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .add-btn:hover {
+            background: rgba(94, 92, 230, 0.15);
+            border-color: var(--primary);
+        }
+        .sync-btn {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .sync-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(94, 92, 230, 0.3);
+        }
+        
+        .prompt-box { 
+            background: linear-gradient(135deg, rgba(30, 30, 46, 0.95) 0%, rgba(45, 43, 66, 0.95) 100%); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #E0E0E0; 
+            padding: 28px; 
+            border-radius: var(--radius-lg); 
+            margin: 24px 0; 
+            position: relative;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        .prompt-box h3 { color: #A78BFA; margin-top: 0; }
+        .prompt-box .copy-btn {
+            top: 20px;
+            right: 20px;
+            padding: 10px 18px;
+            font-size: 14px;
+        }
+        
+        .config-section {
+            margin: 16px 0 16px 20px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="toast" class="toast">✓ 已复制!</div>
+
+    <div class="glass-card intro-card" style="margin-bottom: 24px;">
+        <div class="intro-header">
+            <img src="samuge.png" alt="山姆哥" class="intro-avatar">
+            <div>
+                <div class="intro-title">👋 我是山姆哥</div>
+                <div class="intro-desc">带你玩转 AI 智能体！基于 OpenClaw 平台，为你的 Agent 开启长期记忆功能。</div>
+            </div>
+        </div>
+    </div>
+    
+    <h1 class="section" id="intro">OpenClaw 长期记忆配置指南</h1>
+    
+    <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 24px;">
+        为 OpenClaw 配置本地向量数据库，让所有 Agent 拥有长期记忆能力。基于 Ollama + nomic-embed-text 实现本地 embedding，无需云端 API，安全可控。
+    </p>
+
+    <div class="nav-bar">
+        <div class="nav-title">快速导航</div>
+        <div class="nav-grid">
+            <a href="#intro" class="nav-btn">简介</a>
+            <a href="#install" class="nav-btn">1. 安装Ollama</a>
+            <a href="#embed" class="nav-btn">2. 下载模型</a>
+            <a href="#config" class="nav-btn">3. 配置OpenClaw</a>
+            <a href="#prompt" class="nav-btn">提示词→复制</a>
+            <a href="#faq" class="nav-btn">FAQ</a>
+        </div>
+    </div>
+
+    <h2 class="section" id="install">第一步：安装 Ollama</h2>
+    
+    <div class="platform-tabs">
+        <button class="platform-tab active" onclick="switchPlatform('mac')">🍎 Mac</button>
+        <button class="platform-tab" onclick="switchPlatform('win')">🪟 Windows</button>
+        <button class="platform-tab" onclick="switchPlatform('linux')">🐧 Linux</button>
+    </div>
+    
+    <div id="platform-mac" class="platform-content active">
+        <div class="step">
+            <span class="step-num">1</span>
+            <strong>下载安装 Ollama</strong><br>
+            <span style="color: var(--text-secondary);">访问 <a href="https://ollama.com/download/mac" target="_blank" style="color: var(--primary);">ollama.com/download/mac</a> 下载安装包</span>
+        </div>
+        <div class="step">
+            <span class="step-num">2</span>
+            <strong>或者使用 Homebrew 安装</strong><br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>brew install ollama</code></pre>
+        </div>
+        <div class="step">
+            <span class="step-num">3</span>
+            <strong>启动 Ollama 服务</strong><br>
+            <span style="color: var(--text-secondary);">安装完成后，Ollama 会自动在后台运行</span>
+        </div>
+    </div>
+    
+    <div id="platform-win" class="platform-content">
+        <div class="step">
+            <span class="step-num">1</span>
+            <strong>下载安装 Ollama</strong><br>
+            <span style="color: var(--text-secondary);">访问 <a href="https://ollama.com/download/windows" target="_blank" style="color: var(--primary);">ollama.com/download/windows</a> 下载安装包</span>
+        </div>
+        <div class="step">
+            <span class="step-num">2</span>
+            <strong>运行安装程序</strong><br>
+            <span style="color: var(--text-secondary);">下载 OllamaSetup.exe 后双击运行，按提示完成安装</span>
+        </div>
+        <div class="step">
+            <span class="step-num">3</span>
+            <strong>验证安装</strong><br>
+            <span style="color: var(--text-secondary);">打开 PowerShell 或 CMD，运行 <code>ollama --version</code></span>
+        </div>
+        <div class="note warning">
+            ⚠️ <strong>Windows 用户注意：</strong>Ollama 默认使用 11434 端口，请确保该端口未被占用。如果之前运行过旧版本，建议先卸载后重新安装。
+        </div>
+    </div>
+    
+    <div id="platform-linux" class="platform-content">
+        <div class="step">
+            <span class="step-num">1</span>
+            <strong>安装 Ollama</strong><br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>curl -fsSL https://ollama.com/install.sh | sh</code></pre>
+        </div>
+        <div class="step">
+            <span class="step-num">2</span>
+            <strong>手动安装（如果脚本失败）</strong><br>
+            <span style="color: var(--text-secondary);">下载 <a href="https://github.com/ollama/ollama/releases" target="_blank" style="color: var(--primary);">Linux 预构建包</a></span>
+        </div>
+        <div class="note">
+            💡 <strong>提示：</strong>Linux 安装可能需要配置环境变量，详见 <a href="https://github.com/ollama/ollama" target="_blank" style="color: var(--primary);">官方文档</a>
+        </div>
+    </div>
+
+    <h2 class="section" id="embed">第二步：下载 Embedding 模型</h2>
+    
+    <div class="note">
+        💡 <strong>nomic-embed-text</strong> 是一个开源的文本 embedding 模型，用于将文本转换为向量，是实现长期记忆的关键组件。
+    </div>
+    
+    <div class="step">
+        <span class="step-num">📥</span>
+        <strong>在终端运行以下命令下载模型：</strong>
+        <pre style="margin: 12px 0;"><code>ollama run nomic-embed-text</code></pre>
+        <button class="copy-btn" onclick="copyCommand('ollama run nomic-embed-text')" style="position: relative; top: 0; right: 0;">📋 复制</button>
+    </div>
+    
+    <div class="note">
+        ⏳ 首次下载需要一些时间，模型大小约 274 MB。下载完成后会自动进入交互模式，可以输入文本测试。
+    </div>
+    
+    <div class="step">
+        <span class="step-num">✅</span>
+        <strong>验证模型是否正常运行</strong><br>
+        <span style="color: var(--text-secondary);">在 Ollama 交互界面输入任意文本，确认返回 embedding 向量</span>
+    </div>
+
+    <h2 class="section" id="config">第三步：配置 OpenClaw</h2>
+    
+    <p style="color: var(--text-secondary);">在 openclaw.json 中添加以下配置：</p>
+    
+    <div class="config-section">
+        <button class="copy-btn" onclick="copyConfig()">📋 复制</button>
+        <pre class="config-code" id="configJson">{
+  "tools": {
+    "memory": {
+      "enabled": true,
+      "provider": "ollama",
+      "model": "nomic-embed-text",
+      "endpoint": "http://localhost:11434"
+    }
+  }
+}</pre>
+    </div>
+    
+    <div class="card" style="margin-top: 20px;">
+        <h3 style="margin-top: 0; margin-bottom: 16px; color: var(--primary);">📋 配置参数说明</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>配置项</th>
+                    <th>推荐值</th>
+                    <th>作用</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>tools.memory.enabled</code></td>
+                    <td><code>true</code></td>
+                    <td>开启长期记忆功能</td>
+                </tr>
+                <tr>
+                    <td><code>tools.memory.provider</code></td>
+                    <td><code>ollama</code></td>
+                    <td>使用本地 Ollama 作为向量模型</td>
+                </tr>
+                <tr>
+                    <td><code>tools.memory.model</code></td>
+                    <td><code>nomic-embed-text</code></td>
+                    <td>Embedding 模型名称</td>
+                </tr>
+                <tr>
+                    <td><code>tools.memory.endpoint</code></td>
+                    <td><code>http://localhost:11434</code></td>
+                    <td>Ollama 服务地址</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="note danger">
+        ⚠️ <strong>重要：</strong>配置完成后需要重启 Gateway 才能生效！
+        <pre style="margin: 12px 0 0; background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 8px;"><code style="color: #EF4444;">openclaw gateway restart</code></pre>
+    </div>
+
+    <hr>
+
+    <h2 class="section" id="prompt">一键配置提示词</h2>
+    <p>复制以下提示词发给智能体，让它帮你完成配置：</p>
+    
+    <div style="margin-bottom: 12px;">
+        <button class="copy-btn" onclick="copyPrompt()" style="position: relative; top: 0; right: 0; margin-right: 8px; background: linear-gradient(135deg, #0d9488 0%, #10b981 100%);">📋 复制配置提示词</button>
+    </div>
+
+    <div class="prompt-box">
+        <h3>OpenClaw 长期记忆配置提示词</h3>
+        <pre id="promptContent"># 任务：为 OpenClaw 配置长期记忆功能
+
+## 目标
+为所有 Agent 开启长期记忆能力，基于 Ollama + nomic-embed-text 实现本地向量存储。
+
+## 执行步骤
+
+### 第一步：安装 Ollama（如果未安装）
+
+**Mac:**
+- 访问 https://ollama.com/download/mac 下载安装
+- 或使用 Homebrew: `brew install ollama`
+
+**Windows:**
+- 访问 https://ollama.com/download/windows 下载 OllamaSetup.exe
+- 双击运行安装
+
+**Linux:**
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+### 第二步：下载 Embedding 模型
+```bash
+ollama run nomic-embed-text
+```
+
+### 第三步：配置 openclaw.json
+
+在 openclaw.json 中添加以下配置：
+```json
+{
+  "tools": {
+    "memory": {
+      "enabled": true,
+      "provider": "ollama",
+      "model": "nomic-embed-text",
+      "endpoint": "http://localhost:11434"
+    }
+  }
+}
+```
+
+### 第四步：重启 Gateway
+```bash
+openclaw gateway restart
+```
+
+## 验证配置
+配置完成后，长期记忆功能即可生效。Agent 会自动：
+1. 将重要对话内容存储到本地向量数据库
+2. 检索历史相关记忆来增强回答
+3. 保持跨会话的上下文连贯性
+
+## 注意事项
+- 确保 Ollama 服务正在运行（默认端口 11434）
+- 首次使用需下载 nomic-embed-text 模型（约 274MB）
+- 所有数据存储在本地，无需联网，安全隐私</pre>
+    </div>
+
+    <hr>
+
+    <h2 class="section" id="faq">常见问题</h2>
+    <div class="card">
+        <div style="margin-bottom: 16px;">
+            <strong>Q: Ollama 安装后无法启动怎么办？</strong><br>
+            <span style="color: var(--text-secondary);">→ 检查端口 11434 是否被占用：`netstat -an | grep 11434`（Mac/Linux）或 `netstat -ano | findstr :11434`（Windows）</span>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <strong>Q: 模型下载速度很慢怎么办？</strong><br>
+            <span style="color: var(--text-secondary);">→ 可以配置 Ollama 使用代理，或者从其他镜像源下载</span>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <strong>Q: 如何查看 Ollama 正在运行的模型？</strong><br>
+            <span style="color: var(--text-secondary);">→ 运行 `ollama list` 查看已下载的模型</span>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <strong>Q: 可以使用其他 embedding 模型吗？</strong><br>
+            <span style="color: var(--text-secondary);">→ 可以，只要是在 Ollama 支持的模型列表中即可。推荐 nomic-embed-text、mxbai-embed-large 等</span>
+        </div>
+        <div>
+            <strong>Q: 长期记忆的数据存储在哪里？</strong><br>
+            <span style="color: var(--text-secondary);">→ 默认存储在 ~/.openclaw/memory/ 目录下</span>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ 返回顶部</a>
+    </div>
+
+    <script>
+        function switchPlatform(platform) {
+            document.querySelectorAll('.platform-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.platform-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            document.getElementById('platform-' + platform).classList.add('active');
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        function copyCommand(cmd) {
+            navigator.clipboard.writeText(cmd).then(() => {
+                showToast('✓ 命令已复制!');
+            });
+        }
+        
+        function copyConfig() {
+            const text = document.getElementById('configJson').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✓ JSON 配置已复制!');
+            });
+        }
+        
+        function copyPrompt() {
+            const text = document.getElementById('promptContent').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✓ 提示词已复制!');
+            });
+        }
+    </script>
+</body>
+</html>
