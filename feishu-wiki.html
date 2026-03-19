@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 飞书故障知识库</title>
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --primary: #5E5CE6;
+            --accent-green: #0D9488;
+            --bg-main: linear-gradient(135deg, #f5f5f7 0%, #e8e8f0 50%, #f0f5f9 100%);
+            --bg-card: rgba(255, 255, 255, 0.72);
+            --text-main: #1D1D1F;
+            --text-secondary: #86868B;
+            --glass: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --radius: 20px;
+            --radius-lg: 28px;
+            --shadow: 0 8px 32px rgba(94, 92, 230, 0.08);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; background: var(--bg-main); color: var(--text-main); max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; line-height: 1.7; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(20px); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); box-shadow: var(--shadow); padding: 24px; margin-bottom: 20px; }
+        h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 50%, var(--accent-green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+        h2 { font-size: 18px; font-weight: 600; margin: 32px 0 16px; }
+        h3 { font-size: 16px; font-weight: 600; margin: 20px 0 12px; }
+        .date { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
+        .nav-bar { position: sticky; top: 20px; background: var(--glass); backdrop-filter: blur(24px); padding: 18px 24px; border-radius: var(--radius-lg); margin-bottom: 32px; box-shadow: var(--shadow); border: 1px solid var(--glass-border); z-index: 100; }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; }
+        .nav-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-btn { background: rgba(94, 92, 230, 0.08); color: var(--primary); border: 1px solid rgba(94, 92, 230, 0.12); padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.25s; }
+        .nav-btn:hover { background: var(--primary); color: white; }
+        .step { background: var(--bg-card); padding: 18px 20px; margin: 12px 0; border-radius: var(--radius); border-left: 4px solid var(--primary); }
+        .step-num { font-weight: 600; color: white; background: var(--primary); margin-right: 12px; padding: 4px 10px; border-radius: 8px; font-size: 13px; }
+        code { background: rgba(94, 92, 230, 0.08); padding: 3px 8px; border-radius: 6px; font-family: 'SF Mono', monospace; color: var(--primary); font-size: 14px; }
+        pre { background: #1E1E2E; color: #CDD6F4; padding: 20px; border-radius: var(--radius); overflow-x: auto; margin: 16px 0; }
+        .note { background: #FEF3C7; padding: 16px 20px; border-radius: var(--radius); margin: 16px 0; border: 1px solid #F59E0B; }
+        .danger { background: #FEE2E2; padding: 16px 20px; border-radius: var(--radius); margin: 16px 0; border: 1px solid #EF4444; }
+        .success { background: #D1FAE5; padding: 16px 20px; border-radius: var(--radius); margin: 16px 0; border: 1px solid #10B981; }
+        .tag { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-right: 8px; }
+        .tag-error { background: #FEE2E2; color: #DC2626; }
+        .tag-fix { background: #DBEAFE; color: #2563EB; }
+        .tag-tip { background: #FEF3C7; color: #D97706; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+        th { background: rgba(94, 92, 230, 0.08); color: var(--primary); font-weight: 600; }
+        .section { scroll-margin-top: 100px; }
+    </style>
+</head>
+<body>
+    <h1>OpenClaw 飞书故障知识库</h1>
+    <p class="date">更新时间：2026-03-19 · 适用范围：OpenClaw + Feishu/Lark 多账号</p>
+
+    <div class="nav-bar">
+        <div class="nav-title">快速导航</div>
+        <div class="nav-grid">
+            <a href="#concept" class="nav-btn">核心概念</a>
+            <a href="#error1" class="nav-btn">发不出消息</a>
+            <a href="#error2" class="nav-btn">收不到消息</a>
+            <a href="#error3" class="nav-btn">cross app</a>
+            <a href="#error4" class="nav-btn">未配对</a>
+            <a href="#error5" class="nav-btn">目标错误</a>
+            <a href="#flow" class="nav-btn">排障流程</a>
+            <a href="#config" class="nav-btn">配置示例</a>
+            <a href="#commands" class="nav-btn">命令速查</a>
+        </div>
+    </div>
+
+    <!-- 核心概念 -->
+    <h2 class="section" id="concept">0. 核心概念</h2>
+    <div class="glass-card">
+        <table>
+            <tr><th>术语</th><th>含义</th></tr>
+            <tr><td><code>appId</code></td><td>飞书应用ID（机器人本身）</td></tr>
+            <tr><td><code>appSecret</code></td><td>该 appId 对应的密钥</td></tr>
+            <tr><td><code>accountId</code></td><td>OpenClaw 本地账号名（自定义，如 aiquanzi）</td></tr>
+            <tr><td><code>open_id</code></td><td>用户在某个 appId 下的用户ID（跨应用不通用）</td></tr>
+            <tr><td><code>bindings</code></td><td>路由规则 (channel + accountId) -> agentId</td></tr>
+        </table>
+    </div>
+    <div class="note">
+        <strong>一句话：</strong>accountId 绑定一套 appId/appSecret，而 open_id 必须属于这套 appId 的生态。
+    </div>
+
+    <!-- 1.1 发不出消息 -->
+    <h2 class="section" id="error1">1.1 发不出消息（HTTP 400）</h2>
+    <div class="danger">
+        <strong>典型日志：</strong><br>
+        - failed to obtain token<br>
+        - code: 99991661<br>
+        - Missing access token
+    </div>
+    <div class="step">
+        <span class="step-num">根因</span>
+        appId 和 appSecret 配对错误，导致拿不到 tenant_access_token
+    </div>
+    <div class="step">
+        <span class="step-num">验证</span>
+        <pre>curl -sS -X POST 'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal' \
+  -H 'Content-Type: application/json' \
+  --data '{"app_id":"你的appId","app_secret":"你的appSecret"}'</pre>
+    </div>
+    <div class="success">
+        <strong>结果判断：</strong><br>
+        - {"code":0,...} = 凭据有效 ✅<br>
+        - {"code":10014,"msg":"app secret invalid"} = 凭据错误 ❌
+    </div>
+
+    <!-- 1.2 收不到消息 -->
+    <h2 class="section" id="error2">1.2 机器人"收不到消息"</h2>
+    <div class="glass-card">
+        <h3 style="margin-top:0;">常见根因</h3>
+        <ol>
+            <li>对应 accountId 根本不在 channels.feishu.accounts</li>
+            <li>bindings 没配/配错，消息路由到错误 agent</li>
+            <li>该用户未通过 pairing/allowlist</li>
+        </ol>
+    </div>
+    <div class="step">
+        <span class="step-num">排查</span>
+        <pre>openclaw config get channels.feishu.accounts --json
+openclaw config get bindings --json
+openclaw status --json</pre>
+    </div>
+    <div class="note">
+        <strong>日志关键字：</strong><br>
+        - starting feishu[账号]<br>
+        - feishu[账号]: WebSocket client started<br>
+        - feishu[账号]: received message from ...
+    </div>
+
+    <!-- 1.3 cross app -->
+    <h2 class="section" id="error3">1.3 open_id cross app</h2>
+    <div class="danger">
+        <strong>典型报错：</strong> code: 99992361, msg: open_id cross app
+    </div>
+    <div class="note">
+        <strong>根因：</strong>使用了"另一个飞书应用"下的 open_id，open_id 不能跨 appId 使用。
+    </div>
+    <div class="success">
+        <strong>修复：</strong><br>
+        1. 用当前机器人重新获取目标用户可用ID<br>
+        2. 或在该应用下先与用户建立会话后再发<br>
+        3. 确保发送使用正确 accountId
+    </div>
+
+    <!-- 1.4 未配对 -->
+    <h2 class="section" id="error4">1.4 未配对（access not configured）</h2>
+    <div class="glass-card">
+        <strong>提示样例：</strong><br>
+        - Pairing code: XXXXXXXX<br>
+        - openclaw pairing approve feishu XXXXXXXX
+    </div>
+    <div class="step">
+        <span class="step-num">修复</span>
+        <pre>openclaw pairing approve feishu &lt;PairingCode&gt;</pre>
+    </div>
+
+    <!-- 1.5 目标错误 -->
+    <h2 class="section" id="error5">1.5 目标错误</h2>
+    <div class="danger">
+        <strong>典型报错：</strong><br>
+        - Action send requires a target<br>
+        - Unknown target "xxx" for Feishu
+    </div>
+    <div class="note">
+        <strong>根因：</strong>用了群名称/昵称，不是合法 target ID
+    </div>
+    <div class="success">
+        <strong>修复：</strong><br>
+        - 用户发消息：用 ou_...<br>
+        - 群发消息：用 oc_...<br>
+        - 不要直接用"群名/备注名"做 target
+    </div>
+
+    <!-- 排障流程 -->
+    <h2 class="section" id="flow">2. 标准排障流程</h2>
+    <div class="glass-card">
+        <div class="step"><span class="step-num">1</span>查配置是否有该账号<br><code>openclaw config get channels.feishu.accounts --json</code></div>
+        <div class="step"><span class="step-num">2</span>查路由是否正确<br><code>openclaw config get bindings --json</code></div>
+        <div class="step"><span class="step-num">3</span>查凭据是否有效（token接口）</div>
+        <div class="step"><span class="step-num">4</span>查通道是否已启动<br><code>openclaw status --json</code></div>
+        <div class="step"><span class="step-num">5</span>查日志关键字<br><code>rg -n "failed to obtain token|99991661|open_id cross app|received message|WebSocket" ~/.openclaw/logs/gateway.log | tail -120</code></div>
+        <div class="step"><span class="step-num">6</span>做最小化实发验证<br><code>openclaw message send --channel feishu --account &lt;accountId&gt; --target &lt;ID&gt; --message "test" --json</code></div>
+    </div>
+
+    <!-- 多账号最佳实践 -->
+    <h2 class="section">3. 多账号最佳实践</h2>
+    <div class="glass-card">
+        <ol>
+            <li><strong>每个飞书机器人单独一个 accountId</strong>，不要混用 secret</li>
+            <li><strong>bindings 必须显式写 accountId -> agentId</strong></li>
+            <li><strong>建议配置默认账号</strong>，避免路由歧义</li>
+            <li><strong>改账号名时用"新建+迁移+删除旧的"</strong>，不要直接硬改</li>
+            <li><strong>每次改配置后必做：validate + status + 实发</strong> 三连检查</li>
+        </ol>
+    </div>
+
+    <!-- 配置示例 -->
+    <h2 class="section" id="config">4. 配置示例</h2>
+    <div class="glass-card">
+        <pre>{
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "defaultAccount": "aiquanzi",
+      "accounts": {
+        "aiquanzi": {
+          "appId": "cli_xxx1",
+          "appSecret": "secret1",
+          "enabled": true
+        },
+        "ceo Goldratt": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "bindings": [
+    { "agentId": "aiquanzi", "match": { "channel": "feishu", "accountId": "aiquanzi" } },
+    { "agentId": "gold", "match": { "channel": "feishu", "accountId": "ceo Goldratt" } }
+  ]
+}</pre>
+    </div>
+
+    <!-- 常用命令 -->
+    <h2 class="section" id="commands">5. 常用命令速查</h2>
+    <div class="glass-card">
+        <pre># 查看飞书账号
+openclaw config get channels.feishu.accounts --json
+
+# 查看路由绑定
+openclaw config get bindings --json
+
+# 配置校验
+openclaw config validate
+
+# 状态
+openclaw status --json
+
+# 审批配对
+openclaw pairing approve feishu &lt;code&gt;
+
+# 发送测试
+openclaw message send --channel feishu --account &lt;accountId&gt; --target &lt;id&gt; --message "test" --json</pre>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; color: var(--text-secondary); font-size: 13px;">
+        OpenClaw 飞书故障知识库
+    </div>
+</body>
+</html>
