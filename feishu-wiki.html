@@ -108,21 +108,31 @@
         </div>
     </div>
 
-    <!-- 顶部修复按钮 -->
+    <!-- 顶部修复按钮 + 输入框 -->
     <div style="margin-bottom: 24px;">
+        <div style="margin-bottom: 12px;">
+            <input type="text" id="故障描述" placeholder="请输入故障描述，如：发不出消息、收不到消息、报错99991661等" style="
+                width: 100%;
+                padding: 14px 16px;
+                border: 2px solid rgba(94, 92, 230, 0.2);
+                border-radius: 12px;
+                font-size: 15px;
+                outline: none;
+            " onfocus="this.style.borderColor='#5E5CE6'" onblur="this.style.borderColor='rgba(94, 92, 230, 0.2)'">
+        </div>
         <button onclick="copyFixPrompt()" style="
             width: 100%;
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             color: white;
             border: none;
-            padding: 20px;
-            border-radius: 16px;
-            font-size: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         ">
-            🤖 一键修复飞书 - 点击复制提示词发给 OpenClaw
+            🤖 一键修复飞书
         </button>
     </div>
 
@@ -311,10 +321,12 @@ openclaw message send --channel feishu --account &lt;accountId&gt; --target &lt;
 
     <script>
     function copyFixPrompt() {
+        const 故障描述 = document.getElementById('故障描述').value.trim() || '（未填写）';
+        
         const prompt = `# 任务：根据飞书故障知识库诊断并修复问题
 
 ## 我的故障描述
-（请用一句话描述你遇到的问题，如：发不出消息、收不到消息、报错99991661等）
+${故障描述}
 
 ## 参考知识库
 https://htmlpreview.github.io/?https://raw.githubusercontent.com/2239721014-ops/openclaw--guidance/main/feishu-wiki.html
