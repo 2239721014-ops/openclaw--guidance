@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 更新日志 - 最近更新</title>
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --primary: #5E5CE6;
+            --accent-green: #0D9488;
+            --bg-main: linear-gradient(135deg, #f5f5f7 0%, #e8e8f0 50%, #f0f5f9 100%);
+            --bg-card: rgba(255, 255, 255, 0.72);
+            --text-main: #1D1D1F;
+            --text-secondary: #86868B;
+            --glass: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --radius: 20px;
+            --radius-lg: 28px;
+            --shadow: 0 8px 32px rgba(94, 92, 230, 0.08);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; background: var(--bg-main); color: var(--text-main); max-width: 800px; margin: 0 auto; padding: 40px 20px 80px; line-height: 1.7; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(20px); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); box-shadow: var(--shadow); padding: 24px; margin-bottom: 20px; }
+        h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 50%, var(--accent-green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+        .date { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
+        h2 { font-size: 18px; font-weight: 600; margin: 24px 0 16px; }
+        .release-card { background: var(--glass); backdrop-filter: blur(20px); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
+        .release-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .release-tag { background: linear-gradient(135deg, var(--accent-green) 0%, #10B981 100%); color: white; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+        .release-date { color: var(--text-secondary); font-size: 14px; }
+        .pr-item { padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+        .pr-item:last-child { border-bottom: none; }
+        .pr-title { font-size: 14px; margin-bottom: 6px; }
+        .pr-meta { font-size: 12px; color: var(--text-secondary); }
+        .pr-meta a { color: var(--primary); text-decoration: none; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-right: 6px; }
+        .tag-fix { background: #FEE2E2; color: #DC2626; }
+        .tag-feat { background: #DBEAFE; color: #2563EB; }
+        .tag-docs { background: #FEF3C7; color: #D97706; }
+        .tag-ui { background: #F3E8FF; color: #9333EA; }
+        .tag-security { background: #FEE2E2; color: #991B1B; }
+        .tag-android { background: #D1FAE5; color: #065F46; }
+        .tag-ios { background: #E0E7FF; color: #3730A3; }
+        .section { scroll-margin-top: 100px; }
+    </style>
+</head>
+<body>
+    <h1 class="section">🤖 OpenClaw 更新日志</h1>
+    <p class="date">更新时间：2026年3月19日 · 数据来源：GitHub</p>
+
+    <h2 class="section" id="latest">📦 最新版本 v2026.3.13-1 (3月18日)</h2>
+    
+    <div class="release-card">
+        <div class="release-header">
+            <span class="release-tag">重要更新</span>
+            <span class="release-date">2026年3月18日</span>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+            这是一个恢复版本，用于修复损坏的 v2026.3.13 标签/发布路径。
+        </p>
+        
+        <div class="pr-item">
+            <span class="tag tag-fix">fix</span>
+            <span class="pr-title">compaction: 使用完整会话 token 计数进行压缩后检查</span>
+            <div class="pr-meta">by <a href="https://github.com/efe-arv">@efe-arv</a> in <a href="https://github.com/openclaw/openclaw/pull/28347">#28347</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-fix">fix</span>
+            <span class="pr-title">telegram: 将线程媒体传输策略集成到 SSRF</span>
+            <div class="pr-meta">by <a href="https://github.com/obviyus">@obviyus</a> in <a href="https://github.com/openclaw/openclaw/pull/44639">#44639</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-fix">fix</span>
+            <span class="pr-title">Discord gateway 元数据获取失败处理</span>
+            <div class="pr-meta">by <a href="https://github.com/jalehman">@jalehman</a> in <a href="https://github.com/openclaw/openclaw/pull/44397">#44397</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-feat">feat</span>
+            <span class="pr-title">Android: 重新设计聊天设置 UI</span>
+            <div class="pr-meta">by <a href="https://github.com/obviyus">@obviyus</a> in <a href="https://github.com/openclaw/openclaw/pull/44894">#44894</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-fix">fix</span>
+            <span class="pr-title">agents: 避免在大小写不敏感挂载时注入 memory 文件两次</span>
+            <div class="pr-meta">by <a href="https://github.com/Lanfei">@Lanfei</a> in <a href="https://github.com/openclaw/openclaw/pull/26054">#26054</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-feat">feat</span>
+            <span class="pr-title">Docker: 添加 OPENCLAW_TZ 时区支持</span>
+            <div class="pr-meta">by <a href="https://github.com/Lanfei">@Lanfei</a> in <a href="https://github.com/openclaw/openclaw/pull/34119">#34119</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-ios">iOS</span>
+            <span class="pr-title">iOS: 添加首次欢迎页面</span>
+            <div class="pr-meta">by <a href="https://github.com/ngutman">@ngutman</a> in <a href="https://github.com/openclaw/openclaw/pull/45054">#45054</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-ui">UI</span>
+            <span class="pr-title">移动端导航抽屉和主题变体优化</span>
+            <div class="pr-meta">by <a href="https://github.com/BunsDev">@BunsDev</a> in <a href="https://github.com/openclaw/openclaw/pull/45107">#45107</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-security">security</span>
+            <span class="pr-title">Docker: 防止构建时 gateway token 泄露</span>
+            <div class="pr-meta">by <a href="https://github.com/xingsy97">@xingsy97</a> in <a href="https://github.com/openclaw/openclaw/pull/44956">#44956</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-fix">fix</span>
+            <span class="pr-title">Slack: 添加可选的交互式回复指令</span>
+            <div class="pr-meta">by <a href="https://github.com/vincentkoc">@vincentkoc</a> in <a href="https://github.com/openclaw/openclaw/pull/44607">#44607</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-fix">fix</span>
+            <span class="pr-title">cron: 防止孤立 cron 嵌套 lane 死锁</span>
+            <div class="pr-meta">by <a href="https://github.com/vincentkoc">@vincentkoc</a> in <a href="https://github.com/openclaw/openclaw/pull/45459">#45459</a></div>
+        </div>
+        
+        <div class="pr-item">
+            <span class="tag tag-fix">fix</span>
+            <span class="pr-title">perf: 去重插件 SDK chunks 修复 ~2x 内存回归</span>
+            <div class="pr-meta">by <a href="https://github.com/TarasShyn">@TarasShyn</a> in <a href="https://github.com/openclaw/openclaw/pull/45426">#45426</a></div>
+        </div>
+    </div>
+
+    <h2 class="section" id="highlights">⭐ 重点更新</h2>
+    
+    <div class="glass-card">
+        <div style="margin-bottom: 16px;">
+            <span class="tag tag-feat">新功能</span>
+            <strong>Android 聊天设置重新设计</strong>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                重新设计聊天设置页面，添加分组设备/媒体部分，优化 Connect 和 Voice 标签页。
+            </p>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <span class="tag tag-feat">新功能</span>
+            <strong>iOS 首次运行欢迎页</strong>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                添加首次运行欢迎页面，停止自动打开二维码扫描，显示配对说明。
+            </p>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <span class="tag tag-security">安全</span>
+            <strong>Docker 构建安全修复</strong>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                防止 gateway token 在 Docker 构建时泄露到构建上下文中。
+            </p>
+        </div>
+        <div>
+            <span class="tag tag-fix">修复</span>
+            <strong>性能优化</strong>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                去重插件 SDK chunks，修复 ~2x 内存回归问题。
+            </p>
+        </div>
+    </div>
+
+    <h2 class="section" id="links">🔗 相关链接</h2>
+    <div class="glass-card">
+        <div style="font-size: 14px;">
+            <div style="margin-bottom: 8px;">📄 <a href="https://github.com/openclaw/openclaw/releases" style="color: var(--primary);">官方发布页面</a></div>
+            <div style="margin-bottom: 8px;">📖 <a href="https://docs.openclaw.ai" style="color: var(--primary);">官方文档</a></div>
+            <div>💬 <a href="https://discord.com/invite/clawd" style="color: var(--primary);">Discord 社区</a></div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; color: var(--text-secondary); font-size: 13px;">
+        <p>由 OpenClaw 自动更新 · 数据来源 GitHub</p>
+    </div>
+</body>
+</html>
