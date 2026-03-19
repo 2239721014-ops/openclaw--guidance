@@ -63,7 +63,27 @@
             <a href="#flow" class="nav-btn">排障流程</a>
             <a href="#config" class="nav-btn">配置示例</a>
             <a href="#commands" class="nav-btn">命令速查</a>
+            <button onclick="copyFixPrompt()" class="nav-btn" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; border: none; font-weight: 600;">🤖 一键修复</button>
         </div>
+    </div>
+
+    <!-- 顶部修复按钮 -->
+    <div style="position: sticky; top: 100px; z-index: 99; margin-bottom: 24px;">
+        <button onclick="copyFixPrompt()" style="
+            width: 100%;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            transition: transform 0.2s;
+        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            🤖 一键修复飞书 - 点击复制提示词发给 OpenClaw
+        </button>
     </div>
 
     <!-- 核心概念 -->
@@ -248,5 +268,38 @@ openclaw message send --channel feishu --account &lt;accountId&gt; --target &lt;
     <div style="text-align: center; margin-top: 40px; color: var(--text-secondary); font-size: 13px;">
         OpenClaw 飞书故障知识库
     </div>
+
+    <script>
+    function copyFixPrompt() {
+        const prompt = `# 任务：根据飞书故障知识库诊断并修复问题
+
+## 我的问题
+（请描述你遇到的飞书问题，如：发不出消息、收不到等）
+
+## 请按照以下步骤诊断
+
+1. 运行诊断命令检查配置：
+   - openclaw config get channels.feishu.accounts --json
+   - openclaw config get bindings --json  
+   - openclaw status --json
+
+2. 检查日志：
+   - rg -n "failed to obtain token|99991661|open_id cross app" ~/.openclaw/logs/gateway.log | tail -50
+
+3. 验证凭据：
+   - curl -sS -X POST 'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal' -H 'Content-Type: application/json' --data '{"app_id":"你的appId","app_secret":"你的appSecret"}'
+
+4. 根据诊断结果告诉我：
+   - 问题根因是什么
+   - 需要修复什么
+   - 如何修复
+
+请先运行诊断命令，然后根据知识库帮我分析和修复！`;
+        
+        navigator.clipboard.writeText(prompt).then(() => {
+            alert('✓ 提示词已复制！发给 OpenClaw 让它帮你诊断修复');
+        });
+    }
+    </script>
 </body>
 </html>
