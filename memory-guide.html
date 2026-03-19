@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 长期记忆配置指南</title>
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --primary: #5E5CE6;
+            --primary-light: #A78BFA;
+            --accent-green: #0D9488;
+            --accent-green-light: #CCFBF1;
+            --bg-main: linear-gradient(135deg, #f5f5f7 0%, #e8e8f0 50%, #f0f5f9 100%);
+            --bg-card: rgba(255, 255, 255, 0.72);
+            --text-main: #1D1D1F;
+            --text-secondary: #86868B;
+            --shadow: 0 8px 32px rgba(94, 92, 230, 0.08);
+            --shadow-lg: 0 16px 48px rgba(94, 92, 230, 0.12);
+            --glass: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --radius: 20px;
+            --radius-lg: 28px;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif; 
+            background: var(--bg-main);
+            color: var(--text-main);
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 40px 20px 80px; 
+            line-height: 1.7; 
+        }
+        
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        
+        h1 { 
+            font-size: 28px; 
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 50%, var(--accent-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        h2 { 
+            font-size: 18px; 
+            font-weight: 600; 
+            margin-top: 36px; 
+            margin-bottom: 18px; 
+            color: var(--text-main);
+        }
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .intro-card {
+            background: linear-gradient(135deg, rgba(94, 92, 230, 0.08) 0%, rgba(13, 148, 136, 0.06) 100%);
+            border: 1px solid rgba(94, 92, 230, 0.15);
+        }
+        .intro-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+        .intro-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            object-fit: cover;
+            box-shadow: 0 8px 24px rgba(94, 92, 230, 0.2);
+            border: 3px solid white;
+        }
+        .intro-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .intro-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        .nav-bar { 
+            position: sticky; 
+            top: 20px; 
+            background: var(--glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 18px 24px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--glass-border);
+            z-index: 100;
+        }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .nav-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-btn { 
+            background: rgba(94, 92, 230, 0.08);
+            color: var(--primary);
+            border: 1px solid rgba(94, 92, 230, 0.12);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+        .nav-btn:hover { 
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(94, 92, 230, 0.25);
+        }
+        
+        .step { 
+            background: var(--bg-card); 
+            padding: 18px 20px; 
+            margin: 12px 0; 
+            border-radius: var(--radius); 
+            border-left: 4px solid var(--primary); 
+            position: relative; 
+        }
+        .step-num { 
+            font-weight: 600; 
+            color: white; 
+            background: var(--primary);
+            margin-right: 12px; 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            font-size: 13px;
+        }
+        
+        .platform-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .platform-tab {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(94, 92, 230, 0.1);
+            color: var(--primary);
+        }
+        .platform-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .platform-content {
+            display: none;
+        }
+        .platform-content.active {
+            display: block;
+        }
+        
+        code { 
+            background: rgba(94, 92, 230, 0.08); 
+            padding: 3px 8px; 
+            border-radius: 6px; 
+            font-family: 'SF Mono', Monaco, monospace; 
+            color: var(--primary); 
+            font-size: 14px;
+        }
+        pre { 
+            background: #1E1E2E; 
+            color: #CDD6F4; 
+            padding: 20px; 
+            border-radius: var(--radius); 
+            overflow-x: auto; 
+            position: relative;
+            margin: 16px 0;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, var(--accent-green) 0%, #10B981 100%);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .note { 
+            background: var(--accent-green-light); 
+            padding: 16px 20px; 
+            border-radius: var(--radius); 
+            margin: 16px 0; 
+            border: 1px solid rgba(52, 211, 153, 0.3); 
+        }
+        .note.warning {
+            background: #FEF3C7;
+            border-color: #F59E0B;
+        }
+        .note.danger {
+            background: #FEE2E2;
+            border-color: #EF4444;
+        }
+        
+        .section { scroll-margin-top: 100px; }
+        
+        .card { 
+            background: var(--bg-card); 
+            border-radius: var(--radius-lg); 
+            padding: 24px; 
+            margin: 16px 0; 
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04); 
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        th {
+            background: rgba(94, 92, 230, 0.08);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .back-to-top {
+            display: block;
+            text-align: center;
+            margin-top: 48px;
+        }
+        .back-to-top a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(94, 92, 230, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+            border-radius: 20px;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, var(--accent-green) 0%, #10B981 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(13, 148, 136, 0.4);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        hr { border: none; height: 1px; background: linear-gradient(90deg, transparent, rgba(94, 92, 230, 0.2), transparent); margin: 48px 0; }
+        
+        .prompt-box { 
+            background: linear-gradient(135deg, rgba(30, 30, 46, 0.95) 0%, rgba(45, 43, 66, 0.95) 100%); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #E0E0E0; 
+            padding: 28px; 
+            border-radius: var(--radius-lg); 
+            margin: 24px 0; 
+            position: relative;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        .prompt-box h3 { color: #A78BFA; margin-top: 0; }
+        .prompt-box .copy-btn {
+            top: 20px;
+            right: 20px;
+            padding: 10px 18px;
+            font-size: 14px;
+        }
+        
+        .config-section {
+            margin: 16px 0 16px 20px;
+            position: relative;
+        }
+        
+        .quick-action {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border: 1px solid #6366f1;
+            padding: 20px;
+            border-radius: var(--radius);
+            margin: 20px 0;
+        }
+        .quick-action-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="toast" class="toast">✓ 已复制!</div>
+
+    <!-- IP 形象区 -->
+    <div class="glass-card intro-card" style="margin-bottom: 24px;">
+        <div class="intro-header">
+            <img src="samuge.png" alt="山姆哥" class="intro-avatar">
+            <div>
+                <div class="intro-title">👋 我是山姆哥</div>
+                <div class="intro-desc">交给 OpenClaw 吧！提示词完成一切！小白上手不涉及命令和程序玩转 OpenClaw，安全更省心！</div>
+            </div>
+        </div>
+    </div>
+    
+    <h1 class="section" id="intro">OpenClaw 长期记忆配置指南</h1>
+    
+    <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 24px;">
+        让你的 AI 助手拥有"记忆能力"，下次聊天时它记得你是谁、喜欢什么、之前聊过什么。
+    </p>
+
+    <div class="nav-bar">
+        <div class="nav-title">快速导航</div>
+        <div class="nav-grid">
+            <a href="#intro" class="nav-btn">简介</a>
+            <a href="#setup" class="nav-btn">开始配置</a>
+            <a href="#prompt" class="nav-btn">提示词→复制</a>
+            <a href="#faq" class="nav-btn">FAQ</a>
+        </div>
+    </div>
+
+    <!-- 快速开始 -->
+    <div class="quick-action">
+        <div class="quick-action-title">
+            ⚡ 懒人速通
+        </div>
+        <div style="font-size: 14px; color: var(--text-secondary);">
+            复制下方「一键配置提示词」→ 发给 AI → 让它帮你搞定一切
+        </div>
+    </div>
+
+    <h2 class="section" id="setup">开始配置</h2>
+    
+    <p style="color: var(--text-secondary);">只需 3 步：</p>
+    
+    <div class="platform-tabs">
+        <button class="platform-tab active" onclick="switchPlatform('mac')">🍎 Mac</button>
+        <button class="platform-tab" onclick="switchPlatform('win')">🪟 Windows</button>
+        <button class="platform-tab" onclick="switchPlatform('linux')">🐧 Linux</button>
+    </div>
+    
+    <div id="platform-mac" class="platform-content active">
+        <div class="step">
+            <span class="step-num">1</span>
+            <strong>打开终端</strong> → 创建记忆文件<br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>cd ~/.openclaw/workspace-[你的agent名] && touch MEMORY.md && mkdir -p memory</code></pre>
+        </div>
+        <div class="step">
+            <span class="step-num">2</span>
+            <strong>复制 MEMORY.md 模板</strong>（见下方）<br>
+            <span style="color: var(--text-secondary);">写入你的基本信息、偏好等</span>
+        </div>
+        <div class="step">
+            <span class="step-num">3</span>
+            <strong>重启 Gateway</strong><br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>openclaw gateway restart</code></pre>
+        </div>
+    </div>
+    
+    <div id="platform-win" class="platform-content">
+        <div class="step">
+            <span class="step-num">1</span>
+            <strong>打开 PowerShell</strong> → 进入目录<br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>cd %USERPROFILE%\.openclaw\workspace-[你的agent名]</code></pre>
+        </div>
+        <div class="step">
+            <span class="step-num">2</span>
+            <strong>创建文件</strong><br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>type nul > MEMORY.md & mkdir memory</code></pre>
+        </div>
+        <div class="step">
+            <span class="step-num">3</span>
+            <strong>重启 Gateway</strong><br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>openclaw gateway restart</code></pre>
+        </div>
+    </div>
+    
+    <div id="platform-linux" class="platform-content">
+        <div class="step">
+            <span class="step-num">1</span>
+            <strong>进入工作区</strong><br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>cd ~/.openclaw/workspace-[你的agent名]</code></pre>
+        </div>
+        <div class="step">
+            <span class="step-num">2</span>
+            <strong>创建文件</strong><br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>touch MEMORY.md && mkdir -p memory</code></pre>
+        </div>
+        <div class="step">
+            <span class="step-num">3</span>
+            <strong>重启 Gateway</strong><br>
+            <pre style="margin: 8px 0; padding: 12px;"><code>openclaw gateway restart</code></pre>
+        </div>
+    </div>
+
+    <!-- 场景选择 -->
+    <div class="note" style="margin-top: 24px;">
+        <strong>💡 记忆虽好，但要分场合：</strong>
+        <table style="margin-top: 12px; font-size: 14px;">
+            <tr>
+                <td style="padding: 8px 0;"><strong>一对一聊天</strong></td>
+                <td style="padding: 8px 0;">✅ 放心用 MEMORY.md</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 0;"><strong>群聊</strong></td>
+                <td style="padding: 8px 0;">❌ 别用 MEMORY.md（会泄露隐私）</td>
+            </tr>
+        </table>
+    </div>
+
+    <hr>
+
+    <h2 class="section" id="prompt">一键配置提示词</h2>
+    <p>复制下面这段话发给 AI，让它帮你完成所有配置：</p>
+    
+    <div style="margin-bottom: 12px;">
+        <button class="copy-btn" onclick="copyPrompt()" style="position: relative; top: 0; right: 0; background: linear-gradient(135deg, #0d9488 0%, #10b981 100%);">📋 复制提示词</button>
+    </div>
+
+    <div class="prompt-box">
+        <h3>一键配置提示词</h3>
+        <pre id="promptContent"># 任务：帮我配置 OpenClaw 长期记忆
+
+## 我需要什么
+让我的 AI 助手能记住：
+- 我是谁、怎么称呼我
+- 我喜欢什么、不喜欢什么
+- 之前我们聊过的重要事情
+
+## 帮我做以下事情
+
+### 1. 创建记忆文件
+在 ~/.openclaw/workspace-[我的agent名]/ 目录下：
+- 创建 MEMORY.md 文件
+- 创建 memory/ 文件夹
+
+### 2. 写入模板内容
+帮我生成一份 MEMORY.md 模板，包含：
+- 我的名字、称呼方式
+- 我的偏好（沟通风格、信息密度等）
+- 我的背景（可选）
+- AI 助手的角色设定
+
+### 3. 配置加载规则
+根据 AGENTS.md 的规范，确保：
+- 主会话（一对一）：加载 MEMORY.md + memory/
+- 群聊：不加载 MEMORY.md（保护隐私）
+
+### 4. 重启生效
+执行 openclaw gateway restart
+
+完成后告诉我！"</pre>
+    </div>
+
+    <!-- 配置参数说明 -->
+    <div class="card" style="margin-top: 20px;">
+        <h3 style="margin-top: 0; margin-bottom: 16px; color: var(--primary);">📋 配置参数说明</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>配置项</th>
+                    <th>作用</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>MEMORY.md</code></td>
+                    <td>长期记忆文件，存重要信息</td>
+                </tr>
+                <tr>
+                    <td><code>memory/</code></td>
+                    <td>日常记录文件夹</td>
+                </tr>
+                <tr>
+                    <td><code>加载规则</code></td>
+                    <td>主会话加载，群聊不加载</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <hr>
+
+    <h2 class="section" id="faq">常见问题</h2>
+    <div class="card">
+        <div style="margin-bottom: 16px;">
+            <strong>Q: 群聊也能用记忆吗？</strong><br>
+            <span style="color: var(--text-secondary);">→ 可以用，但只加载 memory/，别加载 MEMORY.md！否则你的隐私会被群友看到。</span>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <strong>Q: 记忆文件能存多少？</strong><br>
+            <span style="color: var(--text-secondary);">→ 建议 MEMORY.md 控制在 2000-5000 字，太长 AI 会"记不住重点"。</span>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <strong>Q: AI 怎么知道要"记住这个"？</strong><br>
+            <span style="color: var(--text-secondary);">→ 直接告诉它："把这个记下来"，它会自动写入 memory/ 或更新 MEMORY.md。</span>
+        </div>
+        <div>
+            <strong>Q: 能同时运行多个有记忆的 AI 吗？</strong><br>
+            <span style="color: var(--text-secondary);">→ 可以！每个 agent 有独立的 workspace，互不影响。</span>
+        </div>
+    </div>
+
+    <!-- 来源说明 -->
+    <hr>
+    <div class="glass-card" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #dee2e6; padding: 20px;">
+        <div style="font-size: 14px; color: var(--text-secondary);">
+            <strong style="color: var(--text-main);">📖 来源说明</strong>
+            <p style="margin-top: 8px;">本教程基于 OpenClaw 官方文档和最佳实践编写。仅供参考，不构成官方承诺。</p>
+            <p style="font-size: 13px; margin-top: 8px;"><em>最后更新：2026年3月19日</em></p>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ 返回顶部</a>
+    </div>
+
+    <script>
+        function switchPlatform(platform) {
+            document.querySelectorAll('.platform-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.platform-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            document.getElementById('platform-' + platform).classList.add('active');
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        function copyPrompt() {
+            const text = document.getElementById('promptContent').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✓ 提示词已复制! 发给 AI 帮你配置');
+            });
+        }
+    </script>
+</body>
+</html>
