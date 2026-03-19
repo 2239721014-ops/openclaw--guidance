@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞书机器人故障排查指南</title>
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --primary: #5E5CE6;
+            --accent-green: #0D9488;
+            --bg-main: linear-gradient(135deg, #f5f5f7 0%, #e8e8f0 50%, #f0f5f9 100%);
+            --bg-card: rgba(255, 255, 255, 0.72);
+            --text-main: #1D1D1F;
+            --text-secondary: #86868B;
+            --glass: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --radius: 20px;
+            --radius-lg: 28px;
+            --shadow: 0 8px 32px rgba(94, 92, 230, 0.08);
+            --shadow-lg: 0 16px 48px rgba(94, 92, 230, 0.12);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; background: var(--bg-main); color: var(--text-main); max-width: 800px; margin: 0 auto; padding: 40px 20px 80px; line-height: 1.7; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(20px); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); box-shadow: var(--shadow); padding: 28px; margin-bottom: 24px; }
+        h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 50%, var(--accent-green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+        h2 { font-size: 18px; font-weight: 600; margin-top: 32px; margin-bottom: 16px; }
+        h3 { font-size: 16px; font-weight: 600; margin-top: 20px; margin-bottom: 12px; }
+        .intro-card { background: linear-gradient(135deg, rgba(94, 92, 230, 0.08) 0%, rgba(13, 148, 136, 0.06) 100%); border: 1px solid rgba(94, 92, 230, 0.15); }
+        .intro-header { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
+        .intro-avatar { width: 80px; height: 80px; border-radius: 24px; object-fit: cover; box-shadow: 0 8px 24px rgba(94, 92, 230, 0.2); border: 3px solid white; }
+        .intro-title { font-size: 18px; font-weight: 600; color: var(--primary); }
+        .intro-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.8; }
+        .nav-bar { position: sticky; top: 20px; background: var(--glass); backdrop-filter: blur(24px); padding: 18px 24px; border-radius: var(--radius-lg); margin-bottom: 32px; box-shadow: var(--shadow-lg); border: 1px solid var(--glass-border); z-index: 100; }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; }
+        .nav-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-btn { background: rgba(94, 92, 230, 0.08); color: var(--primary); border: 1px solid rgba(94, 92, 230, 0.12); padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.25s; }
+        .nav-btn:hover { background: var(--primary); color: white; transform: translateY(-1px); }
+        .step { background: var(--bg-card); padding: 18px 20px; margin: 12px 0; border-radius: var(--radius); border-left: 4px solid var(--primary); }
+        .step-num { font-weight: 600; color: white; background: var(--primary); margin-right: 12px; padding: 4px 10px; border-radius: 8px; font-size: 13px; }
+        code { background: rgba(94, 92, 230, 0.08); padding: 3px 8px; border-radius: 6px; font-family: 'SF Mono', monospace; color: var(--primary); font-size: 14px; }
+        pre { background: #1E1E2E; color: #CDD6F4; padding: 20px; border-radius: var(--radius); overflow-x: auto; margin: 16px 0; }
+        .note { background: #FEF3C7; padding: 16px 20px; border-radius: var(--radius); margin: 16px 0; border: 1px solid #F59E0B; }
+        .danger { background: #FEE2E2; padding: 16px 20px; border-radius: var(--radius); margin: 16px 0; border: 1px solid #EF4444; }
+        .success { background: #D1FAE5; padding: 16px 20px; border-radius: var(--radius); margin: 16px 0; border: 1px solid #10B981; }
+        .tag { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-right: 8px; }
+        .tag-error { background: #FEE2E2; color: #DC2626; }
+        .tag-fix { background: #DBEAFE; color: #2563EB; }
+        .tag-tip { background: #FEF3C7; color: #D97706; }
+        .section { scroll-margin-top: 100px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+        th { background: rgba(94, 92, 230, 0.08); color: var(--primary); font-weight: 600; }
+        hr { border: none; height: 1px; background: linear-gradient(90deg, transparent, rgba(94, 92, 230, 0.2), transparent); margin: 48px 0; }
+    </style>
+</head>
+<body>
+    <!-- IP 形象区 -->
+    <div class="glass-card intro-card" style="margin-bottom: 24px;">
+        <div class="intro-header">
+            <div>
+                <div class="intro-title">🔧 飞书机器人故障排查</div>
+                <div class="intro-desc">OpenClaw 飞书消息故障排查最短路径指南</div>
+            </div>
+        </div>
+    </div>
+    
+    <h1>飞书机器人故障排查指南</h1>
+    <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 24px;">快速诊断和解决 OpenClaw 飞书消息发送失败的问题</p>
+
+    <div class="nav-bar">
+        <div class="nav-title">快速导航</div>
+        <div class="nav-grid">
+            <a href="#intro" class="nav-btn">问题概述</a>
+            <a href="#symptoms" class="nav-btn">典型症状</a>
+            <a href="#steps" class="nav-btn">排查步骤</a>
+            <a href="#verify" class="nav-btn">验证命令</a>
+            <a href="#config" class="nav-btn">配置建议</a>
+        </div>
+    </div>
+
+    <!-- 问题概述 -->
+    <h2 class="section" id="intro">📋 问题概述</h2>
+    
+    <div class="danger">
+        <strong>核心问题：</strong>飞书账号凭据错配导致无法获取 access_token
+    </div>
+    
+    <div class="glass-card">
+        <h3 style="margin-top:0;">典型报错</h3>
+        <ul>
+            <li><code>failed to obtain token</code> - 获取 token 失败</li>
+            <li><code>99991661 Missing access token</code> - 缺少访问令牌</li>
+            <li><code>99992361 open_id cross app</code> - 跨应用发消息（不是 bug，是规则限制）</li>
+        </ul>
+    </div>
+
+    <!-- 典型症状 -->
+    <h2 class="section" id="symptoms">🔍 典型症状</h2>
+    
+    <div class="glass-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>症状</th>
+                    <th>原因</th>
+                    <th>解决方案</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>发不出消息</td>
+                    <td>appSecret 和 appId 不匹配</td>
+                    <td>修正凭据</td>
+                </tr>
+                <tr>
+                    <td>第二个机器人收不到</td>
+                    <td>账号配置被删除，未启动监听</td>
+                    <td>恢复配置并启动</td>
+                </tr>
+                <tr>
+                    <td>99992361 错误</td>
+                    <td>跨应用发消息</td>
+                    <td>用同一个应用发</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 排查步骤 -->
+    <h2 class="section" id="steps">🛠️ 排查步骤（最短路径）</h2>
+    
+    <h3>1. 看日志关键字</h3>
+    <div class="step">
+        <span class="step-num">1</span>
+        <strong>运行命令：</strong>
+        <pre>rg -n "failed to obtain token|99991661|open_id cross app|feishu\[" ~/.openclaw/logs/gateway.log | tail -n 80</pre>
+    </div>
+
+    <h3>2. 验证 app_id + app_secret 是否匹配</h3>
+    <div class="step">
+        <span class="step-num">2</span>
+        <strong>运行命令：</strong>
+        <pre>curl -sS -X POST 'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal' \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  --data '{"app_id":"你的app_id","app_secret":"你的app_secret"}'</pre>
+    </div>
+    
+    <div class="note">
+        <strong>返回结果判断：</strong>
+        <ul>
+            <li><code>code:0</code> = 凭据有效 ✅</li>
+            <li><code>code:10014</code> = app_secret 无效 ❌</li>
+        </ul>
+    </div>
+
+    <h3>3. 确认账号是否在配置里</h3>
+    <div class="step">
+        <span class="step-num">3</span>
+        <strong>检查 channels.feishu.accounts 下是否有这个账号</strong>
+        <p style="color: var(--text-secondary);">没有配置就不会启动</p>
+    </div>
+
+    <h3>4. 确认账号是否真的启动</h3>
+    <div class="step">
+        <span class="step-num">4</span>
+        <strong>日志中查找：</strong>
+        <ul>
+            <li><code>starting feishu[账号]</code></li>
+            <li><code>feishu[账号]: WebSocket client started</code></li>
+        </ul>
+    </div>
+
+    <!-- 验证命令 -->
+    <h2 class="section" id="verify">✅ 做最小发送验证</h2>
+    
+    <div class="glass-card">
+        <pre>openclaw message send --channel feishu --account 账号ID --target 目标ID --message "test" --json</pre>
+    </div>
+
+    <!-- 配置建议 -->
+    <h2 class="section" id="config">⚙️ 配置建议（避免再次踩坑）</h2>
+    
+    <div class="glass-card">
+        <ul>
+            <li><strong>每个飞书机器人单独一个 accounts.&lt;id&gt;</strong>，不要复用 secret</li>
+            <li><strong>bindings 明确写 accountId -> agentId</strong></li>
+            <li><strong>不要只改顶层 channels.feishu.appId/appSecret</strong>，多账号时优先看 accounts</li>
+            <li><strong>每次改完配置，立刻做一次 token 校验 + 最小消息发送</strong></li>
+        </ul>
+    </div>
+
+    <div class="note">
+        <strong>💡 关于 open_id cross app 错误</strong>
+        <p>这不是 bug，是飞书的应用隔离规则：</p>
+        <p>只能用"同一个飞书应用"下的机器人发给"它能识别的用户ID"。不能跨应用拿 open_id 互发。</p>
+    </div>
+
+    <hr>
+    
+    <div style="text-align: center; color: var(--text-secondary); font-size: 14px;">
+        <p>OpenClaw 故障排查指南</p>
+    </div>
+</body>
+</html>
