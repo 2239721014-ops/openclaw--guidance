@@ -48,6 +48,17 @@
     </style>
 </head>
 <body>
+    <!-- IP 形象区 -->
+    <div class="glass-card intro-card" style="margin-bottom: 24px;">
+        <div class="intro-header">
+            <img src="samuge.png" alt="山姆哥" class="intro-avatar">
+            <div>
+                <div class="intro-title">👋 我是山姆哥</div>
+                <div class="intro-desc">交给 OpenClaw 吧！提示词完成一切！小白上手不涉及命令和程序玩转 OpenClaw，安全更省心！</div>
+            </div>
+        </div>
+    </div>
+    
     <h1>OpenClaw 飞书故障知识库</h1>
     <p class="date">更新时间：2026-03-19 · 适用范围：OpenClaw + Feishu/Lark 多账号</p>
 
@@ -68,7 +79,7 @@
     </div>
 
     <!-- 顶部修复按钮 -->
-    <div style="position: sticky; top: 100px; z-index: 99; margin-bottom: 24px;">
+    <div style="margin-bottom: 24px;">
         <button onclick="copyFixPrompt()" style="
             width: 100%;
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
@@ -80,8 +91,7 @@
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-            transition: transform 0.2s;
-        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        ">
             🤖 一键修复飞书 - 点击复制提示词发给 OpenClaw
         </button>
     </div>
