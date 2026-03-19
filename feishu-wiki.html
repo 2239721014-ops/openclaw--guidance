@@ -313,8 +313,11 @@ openclaw message send --channel feishu --account &lt;accountId&gt; --target &lt;
     function copyFixPrompt() {
         const prompt = `# 任务：根据飞书故障知识库诊断并修复问题
 
-## 我的问题
-（请描述你遇到的飞书问题，如：发不出消息、收不到等）
+## 我的故障描述
+（请用一句话描述你遇到的问题，如：发不出消息、收不到消息、报错99991661等）
+
+## 参考知识库
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/2239721014-ops/openclaw--guidance/main/feishu-wiki.html
 
 ## 请按照以下步骤诊断
 
