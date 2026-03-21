@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Docker 安装教程</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 15px;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 15px 40px;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        
+        nav a:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: #667eea;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin: 25px 0 15px;
+        }
+        
+        h4 {
+            color: #555;
+            font-size: 1.1em;
+            margin: 20px 0 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        footer {
+            background: #2d2d2d;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        
+        footer a {
+            color: #667eea;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 30px 20px;
+            }
+            
+            header h1 {
+                font-size: 1.6em;
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            nav {
+                padding: 10px 20px;
+            }
+            
+            pre {
+                font-size: 0.8em;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐙 OpenClaw Docker 安装教程</h1>
+            <p>在 Docker 环境中运行 OpenClaw 网关的完整指南</p>
+            <span class="badge">版本 1.0 · 2026-03-15</span>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#overview">概述</a></li>
+                <li><a href="#prepare">准备</a></li>
+                <li><a href="#install">安装</a></li>
+                <li><a href="#remote-image">远程镜像</a></li>
+                <li><a href="#sandbox">沙箱</a></li>
+                <li><a href="#commands">命令</a></li>
+                <li><a href="#channels">频道</a></li>
+                <li><a href="#health">健康检查</a></li>
+                <li><a href="#troubleshoot">故障</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section id="overview">
+                <h2>📖 概述</h2>
+                <p>本教程将帮助你把 <strong>OpenClaw</strong> 安装到 Docker 环境中。Docker 安装是<em>可选的</em>，仅在你需要容器化的网关环境或在无本地安装的主机上运行 OpenClaw 时才推荐使用。</p>
+                
+                <div class="tip">
+                    <strong>💡 提示：</strong> 如果只是在本地开发调试，建议使用正常的本地安装流程，Docker 方式适合服务器部署或需要隔离环境的场景。
+                </div>
+            </section>
+            
+            <section id="prepare">
+                <h2>🔧 一、准备工作</h2>
+                
+                <h3>1.1 环境要求</h3>
+                <ul>
+                    <li><strong>Docker Desktop</strong>（macOS/Windows）或 <strong>Docker Engine</strong>（Linux）</li>
+                    <li><strong>Docker Compose v2</strong></li>
+                    <li>至少 <strong>2 GB RAM</strong>（构建镜像时需要）</li>
+                    <li>足够的磁盘空间用于镜像和日志</li>
+                    <li>如果在 VPS/公网主机上运行，需检查防火墙策略</li>
+                </ul>
+                
+                <h3>1.2 检查 Docker 是否已安装</h3>
+                <pre><code>docker --version
+docker compose version</code></pre>
+                
+                <div class="note">
+                    <strong>📝 注意：</strong> 如果未安装 Docker，请访问 <a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker 官网</a> 下载安装。
+                </div>
+            </section>
+            
+            <section id="install">
+                <h2>🚀 二、快速开始（推荐）</h2>
+                
+                <h3>2.1 一键安装</h3>
+                <p>从 OpenClaw 仓库根目录运行：</p>
+                <pre><code>./docker-setup.sh</code></pre>
+                
+                <p>这个脚本会自动完成以下操作：</p>
+                <ul>
+                    <li>✅ 在本地构建网关镜像（或从远程拉取）</li>
+                    <li>✅ 运行初始化向导</li>
+                    <li>✅ 打印可选的 provider 设置提示</li>
+                    <li>✅ 通过 Docker Compose 启动网关</li>
+                    <li>✅ 生成网关 token 并写入 <code>.env</code> 文件</li>
+                </ul>
+                
+                <h3>2.2 初始化配置</h3>
+                <p>安装完成后：</p>
+                <ol>
+                    <li>在浏览器中打开 <code>http://127.0.0.1:18789/</code></li>
+                    <li>将 token 粘贴到 Control UI（设置 → token）</li>
+                </ol>
+                
+                <div class="tip">
+                    <strong>💡 提示：</strong> 如果需要再次获取 URL，运行：
+                    <pre><code>docker compose run --rm openclaw-cli dashboard --no-open</code></pre>
+                </div>
+            </section>
+            
+            <section id="remote-image">
+                <h2>📦 三、使用远程镜像</h2>
+                <p>如果你想直接使用官方预构建的镜像，而不是本地构建：</p>
+                <pre><code>export OPENCLAW_IMAGE="ghcr.io/openclaw/openclaw:latest"
+./docker-setup.sh</code></pre>
+                
+                <h3>官方镜像标签</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>标签</th>
+                            <th>说明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>main</code></td>
+                            <td>main 分支的最新构建</td>
+                        </tr>
+                        <tr>
+                            <td><code>&lt;version&gt;</code></td>
+                            <td>发布版本（如 <code>2026.2.26</code>）</td>
+                        </tr>
+                        <tr>
+                            <td><code>latest</code></td>
+                            <td>最新稳定版</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <section id="sandbox">
+                <h2>🛡️ 四、启用 Agent 沙箱（可选）</h2>
+                <p>如果你想在 Docker 部署中启用沙箱隔离：</p>
+                <pre><code>export OPENCLAW_SANDBOX=1
+./docker-setup.sh</code></pre>
+                
+                <h4>自定义 Docker socket 路径（rootless Docker）：</h4>
+                <pre><code>export OPENCLAW_SANDBOX=1
+export OPENCLAW_DOCKER_SOCKET=/run/user/1000/docker.sock
+./docker-setup.sh</code></pre>
+                
+                <div class="warning">
+                    <strong>⚠️ 注意：</strong> 沙箱功能会为每个 Agent 创建一个独立的容器，实现工具执行的隔离。详细配置请参考官方安全文档。
+                </div>
+            </section>
+            
+            <section id="commands">
+                <h2>⌨️ 五、常用操作命令</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>操作</th>
+                            <th>命令</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>启动网关</td>
+                            <td><code>docker compose up -d openclaw-gateway</code></td>
+                        </tr>
+                        <tr>
+                            <td>停止网关</td>
+                            <td><code>docker compose down</code></td>
+                        </tr>
+                        <tr>
+                            <td>查看日志</td>
+                            <td><code>docker compose logs -f openclaw-gateway</code></td>
+                        </tr>
+                        <tr>
+                            <td>查看状态</td>
+                            <td><code>docker compose ps</code></td>
+                        </tr>
+                        <tr>
+                            <td>重启网关</td>
+                            <td><code>docker compose restart openclaw-gateway</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>手动初始化（高级）</h3>
+                <p>如果 <code>docker-setup.sh</code> 不适用，可以手动运行：</p>
+                <pre><code># 构建镜像
+docker build -t openclaw:local -f Dockerfile .
+
+# 初始化配置
+docker compose run --rm openclaw-cli onboard
+
+# 启动网关
+docker compose up -d openclaw-gateway</code></pre>
+            </section>
+            
+            <section id="channels">
+                <h2>💬 六、频道设置（可选）</h2>
+                
+                <h3>6.1 WhatsApp（扫码登录）</h3>
+                <pre><code>docker compose run --rm openclaw-cli channels login</code></pre>
+                
+                <h3>6.2 Telegram</h3>
+                <pre><code>docker compose run --rm openclaw-cli channels add --channel telegram --token "&lt;你的bot_token&gt;"</code></pre>
+                
+                <h3>6.3 Discord</h3>
+                <pre><code>docker compose run --rm openclaw-cli channels add --channel discord --token "&lt;你的bot_token&gt;"</code></pre>
+            </section>
+            
+            <section id="health">
+                <h2>❤️ 七、健康检查</h2>
+                
+                <h3>7.1 基础健康检查</h3>
+                <pre><code>curl -fsS http://127.0.0.1:18789/healthz
+curl -fsS http://127.0.0.1:18789/readyz</code></pre>
+                
+                <h3>7.2 深度健康检查（含频道状态）</h3>
+                <pre><code>docker compose exec openclaw-gateway node dist/index.js health --token "$OPENCLAW_GATEWAY_TOKEN"</code></pre>
+            </section>
+            
+            <section id="troubleshoot">
+                <h2>🔧 八、故障排除</h2>
+                
+                <h3>8.1 Token 过期或需要重新配对</h3>
+                <pre><code># 获取新的 dashboard 链接
+docker compose run --rm openclaw-cli dashboard --no-open
+
+# 列出设备请求
+docker compose run --rm openclaw-cli devices list
+
+# 批准设备
+docker compose run --rm openclaw-cli devices approve &lt;requestId&gt;</code></pre>
+                
+                <h3>8.2 权限问题（EACCES）</h3>
+                <p>镜像以非 root 用户 <code>node</code>（uid 1000）运行。如果遇到权限错误：</p>
+                <pre><code># Linux 主机上
+sudo chown -R 1000:1000 /path/to/openclaw-config /path/to/openclaw-workspace</code></pre>
+                
+                <h3>8.3 网络连接问题</h3>
+                <p>如果看到 <code>Gateway target: ws://172.x.x.x:18789</code> 或重复的 <code>pairing required</code> 错误：</p>
+                <pre><code>docker compose run --rm openclaw-cli config set gateway.mode local
+docker compose run --rm openclaw-cli config set gateway.bind lan
+docker compose run --rm openclaw-cli devices list --url ws://127.0.0.1:18789</code></pre>
+            </section>
+            
+            <section>
+                <h2>🛠️ 九、Shell 辅助工具（可选）</h2>
+                <p>安装 <code>ClawDock</code> 让日常 Docker 管理更方便：</p>
+                <pre><code>mkdir -p ~/.clawdock && curl -sL https://raw.githubusercontent.com/openclaw/openclaw/main/scripts/shell-helpers/clawdock-helpers.sh -o ~/.clawdock/clawdock-helpers.sh</code></pre>
+                <p>添加到 zsh 配置：</p>
+                <pre><code>echo 'source ~/.clawdock/clawdock-helpers.sh' >> ~/.zshrc && source ~/.zshrc</code></pre>
+                <p>可用命令：<code>clawdock-start</code>、<code>clawdock-stop</code>、<code>clawdock-dashboard</code> 等。</p>
+            </section>
+            
+            <section>
+                <h2>⚙️ 十、高级配置</h2>
+                
+                <h3>10.1 持久化整个容器 home 目录</h3>
+                <pre><code>export OPENCLAW_HOME_VOLUME="openclaw_home"
+./docker-setup.sh</code></pre>
+                
+                <h3>10.2 额外挂载主机目录</h3>
+                <pre><code>export OPENCLAW_EXTRA_MOUNTS="$HOME/.codex:/home/node/.codex:ro,$HOME/github:/home/node/github:rw"
+./docker-setup.sh</code></pre>
+                
+                <h3>10.3 预装系统包</h3>
+                <pre><code>export OPENCLAW_DOCKER_APT_PACKAGES="ffmpeg build-essential git curl jq"
+./docker-setup.sh</code></pre>
+                
+                <h3>10.4 预装扩展依赖</h3>
+                <pre><code>export OPENCLAW_EXTENSIONS="diagnostics-otel matrix"
+./docker-setup.sh</code></pre>
+            </section>
+            
+            <section>
+                <h2>📚 相关文档</h2>
+                <ul>
+                    <li><a href="https://docs.openclaw.ai/install/docker" target="_blank">官方文档</a></li>
+                    <li><a href="https://docs.openclaw.ai/web/dashboard" target="_blank">Control UI 使用指南</a></li>
+                    <li><a href="https://docs.openclaw.ai/cli/devices" target="_blank">设备配对说明</a></li>
+                    <li><a href="https://docs.openclaw.ai/gateway/sandboxing" target="_blank">沙箱安全配置</a></li>
+                </ul>
+            </section>
+        </main>
+        
+        <footer>
+            <p>📄 文档更新时间：2026-03-15</p>
+            <p>由 OpenClaw AI 生成 · <a href="https://docs.openclaw.ai" target="_blank">访问官网</a></p>
+        </footer>
+    </div>
+    
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
